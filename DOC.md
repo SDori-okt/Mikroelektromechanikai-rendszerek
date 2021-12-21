@@ -7,10 +7,10 @@ A DHT-22 (alternatív néven: AM2302) pára- és hőmérsékletszenzor ideális 
 
 Funkciók:
 - 1 másodperc válaszidő
-- max. 100 méter vezetékhossz
-- működési feszültségtartomány: 3.3-5.5V
-- mérési pontosság: 0.1°C, 0.1RH%
-- csatlakoztatása külső alkatrészt nem igényel
+- Max. 100 méter vezetékhossz
+- Működési feszültségtartomány: 3.3-5.5V
+- Mérési pontosság: 0.1°C, 0.1RH%
+- Csatlakoztatása külső alkatrészt nem igényel
 
 Csatlakoztatás az alábbi ábra alapján:
 
@@ -31,3 +31,16 @@ Csatlakoztatás az alábbi ábra alapján:
 
 ![oled](/img/oled.jpg)
 
+### Ajtónyitás érzékelő
+
+A Reed YB-32NC egy felületre szerelhető reed relés nyitásérzékelő, ideális beléptető rendszerek ajtóállapot visszajelzésére, ezáltal az általam tervezett okosotthon ajtajához is megfelelt. Az eszköz NC módban működik, vagyis bezárt ajtó esetén ad rövidzárat.
+
+Funkciók:
+- Mód: NC (mágneses)
+- Érzékenység: 15mm
+- Méret : 34 × 7,62 × 13,5 mm
+- Terhelhetőség: 0.5A / 30 V DC
+
+Bekötés az alábbi ábra alapján:
+
+![ajtonyitas](/img/arduino-door-sensor-wiring-diagram.jpg)
