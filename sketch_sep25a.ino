@@ -7,6 +7,7 @@
 #define lampa 11
 #define hom 7
 #define servo 13
+#define riaszto 12
 
 #include <Ethernet.h>
 #include <MySQL_Connection.h>
@@ -18,31 +19,26 @@
 
 DHT dht(hom, DHT22);
 U8GLIB_SH1106_128X64 u8g(2, 3, 10, 5, 4);
-
 Servo myservo;
 int eso1=0;
 int eso2=0;
-int state=0;
-int pre = 0;
+int allas=LOW;
+int pre = LOW;
+int sotet=900;
+int mozog=0;
 
-/*szerver adatai*/
-byte mac_addr[] = { 0x08, 0x97, 0x98, 0xE5, 0x1F, 0x5A }; //08-97-98-E5-1F-5A
-IPAddress server_addr(127,0,0,1);  // server ip
-char user[] = "root";              // MySQL felhasználónév
-char password[] = "";        // MySQL jelszó
-
-/*Arduino adatai*/
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-byte ip[] = { 192, 168, 10, 3 }; //arduino ip
+byte ip[] = { 192, 168, 10, 3 }; 
 byte subnet[] = {255, 255, 255, 0};
 
 EthernetClient client;
 
 int    HTTP_PORT   = 80;
 String HTTP_METHOD = "GET";
-char   HOST_NAME[] = "192.168.10.2"; // számítógép IP címe
+char   HOST_NAME[] = "192.168.10.2"; 
 String PATH_NAME   = "/test.php";
-String queryString = "?state=1";
+String nyit = "?state=1";
+String csuk = "?state=0";
 
 void kijelzo(void) 
 {
@@ -57,6 +53,27 @@ void kijelzo(void)
    u8g.println("%");
 }
 
+void adatbazis(String val)
+{
+  if(client.connect(HOST_NAME, HTTP_PORT)) {
+    Serial.println("Connected to server");
+    client.println(HTTP_METHOD + " " + PATH_NAME + val + " HTTP/1.1");
+    client.println("Host: " + String(HOST_NAME));
+    client.println("Connection: close");
+    client.println(); 
+    while(client.connected()) {
+      if(client.available()){
+        char c = client.read();
+        Serial.print(c);
+      }
+    }
+    client.stop();
+    Serial.println();
+    Serial.println("disconnected");
+  } else {// if not connected:
+    Serial.println("connection failed");
+  }
+}
 
 void setup() {
     myservo.attach(servo);
@@ -72,7 +89,9 @@ void setup() {
     myservo.write(100);
 
     dht.begin();
+
     Ethernet.begin(mac, ip);
+    
     Serial.println("Connecting...");
     
     Serial.print("- Arduino's IP address   : ");
@@ -87,75 +106,47 @@ void setup() {
     Serial.print("- DNS server's IP address: ");
     Serial.println(Ethernet.dnsServerIP());
     
-    if(client.connect(HOST_NAME, HTTP_PORT)) {
-    Serial.println("Kapcsolódva a szerverhez");
-
-    client.println(HTTP_METHOD + " " + PATH_NAME + queryString + " HTTP/1.1");
-    client.println("Host: " + String(HOST_NAME));
-    client.println("Kapcsolat lezárva");
-    client.println(); 
-
-    while(client.connected()) {
-      if(client.available()){
-        char c = client.read();
-        Serial.print(c);
-      }
-    }
-
-    client.stop();
-    Serial.println();
-    Serial.println("Leválasztva");
-  } else {
-    Serial.println("Nem jött létre kapcsolat");
-  
 }
 
 void loop() {
-  //MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
-  pre=state;
-  state = digitalRead(ajto);
-  
-  if (state == HIGH && pre == LOW){
+  pre=allas;
+  allas = digitalRead(ajto);
+  if (allas == HIGH && pre == LOW){
       Serial.print("Nyit");
-     //cur_mem->execute("INSERT INTO idopontok(ido, nyit) VALUES (NOW(), 0)"); 
+      adatbazis(nyit);    
   }
-  if(state == LOW && pre == HIGH){
+  if(allas == LOW && pre == HIGH){
      Serial.print("Csuk");
-    //cur_mem->execute("INSERT INTO idopontok(ido, nyit) VALUES (NOW(), 1)");
+     adatbazis(csuk);
   }
-  //delete cur_mem;
+  delay(10);
   
-  int reading = analogRead(13);
-  int currentangle = map(reading, 0, 1023, 0, 180); 
-  Serial.print("Szög:");
-  Serial.print(currentangle);
-  delay(10);  
   eso1 = analogRead(w1);
   eso2 = analogRead(w2);
   Serial.print("szenzorok: ");
   Serial.print(eso1);
   Serial.print(" ");
   Serial.println(eso2);
-  if(eso1 > 170 and eso2 > 170 and currentangle<170){
-    myservo.write(180);
+  if(eso1 > 300 and eso2 > 300){
+    myservo.write(0);
   }
-  /*
-  float t = dht.readTemperature();
-  Serial.println(t);*/
     
   u8g.firstPage();  
   do{
      kijelzo();
   }while(u8g.nextPage());
-   
-  Serial.print("alkony: ");
-  Serial.println(analogRead(alkony));
-  Serial.print("mozgas: ");
-  Serial.println(digitalRead(mozgas));
-  if(digitalRead(mozgas)==1 and analogRead(alkony)>800){
+  
+  sotet=analogRead(alkony);
+  Serial.print(sotet);
+  Serial.print("-");
+  mozog=digitalRead(mozgas);
+  Serial.println(mozog);
+  if(mozog>0 and sotet>800){
     digitalWrite(lampa, HIGH);
   }else{
     digitalWrite(lampa, LOW);
   }
-  delay(1000);
+  
+  delay(2000);
+  
 }
