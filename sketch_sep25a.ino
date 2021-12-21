@@ -14,6 +14,7 @@
 #include <MySQL_Cursor.h>
 #include <DHT.h>
 #include <U8glib.h>
+#include <SPI.h>
 
 DHT dht(hom, DHT22);
 U8GLIB_SH1106_128X64 u8g(2, 3, 10, 5, 4);
@@ -24,16 +25,24 @@ int eso2=0;
 int state=0;
 int pre = 0;
 
-/*
+/*szerver adatai*/
 byte mac_addr[] = { 0x08, 0x97, 0x98, 0xE5, 0x1F, 0x5A }; //08-97-98-E5-1F-5A
-
 IPAddress server_addr(127,0,0,1);  // server ip
 char user[] = "root";              // MySQL felhasználónév
 char password[] = "";        // MySQL jelszó
 
+/*Arduino adatai*/
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+byte ip[] = { 192, 168, 10, 3 }; //arduino ip
+byte subnet[] = {255, 255, 255, 0};
+
 EthernetClient client;
-MySQL_Connection conn((Client *)&client);
-*/
+
+int    HTTP_PORT   = 80;
+String HTTP_METHOD = "GET";
+char   HOST_NAME[] = "192.168.10.2"; // számítógép IP címe
+String PATH_NAME   = "/test.php";
+String queryString = "?state=1";
 
 void kijelzo(void) 
 {
@@ -63,7 +72,6 @@ void setup() {
     myservo.write(100);
 
     dht.begin();
-    /*
     Ethernet.begin(mac, ip);
     Serial.println("Connecting...");
     
@@ -79,13 +87,27 @@ void setup() {
     Serial.print("- DNS server's IP address: ");
     Serial.println(Ethernet.dnsServerIP());
     
-    if (conn.connect(server_addr, 3306, user, password)) {
-      Serial.println("Csatlakoztatva.");
-    } else {
-      Serial.println("Nem sikerült kapcsolódni.");
+    if(client.connect(HOST_NAME, HTTP_PORT)) {
+    Serial.println("Kapcsolódva a szerverhez");
+
+    client.println(HTTP_METHOD + " " + PATH_NAME + queryString + " HTTP/1.1");
+    client.println("Host: " + String(HOST_NAME));
+    client.println("Kapcsolat lezárva");
+    client.println(); 
+
+    while(client.connected()) {
+      if(client.available()){
+        char c = client.read();
+        Serial.print(c);
+      }
     }
-    conn.close();
-    */
+
+    client.stop();
+    Serial.println();
+    Serial.println("Leválasztva");
+  } else {
+    Serial.println("Nem jött létre kapcsolat");
+  
 }
 
 void loop() {
