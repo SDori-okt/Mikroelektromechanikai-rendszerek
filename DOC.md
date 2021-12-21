@@ -60,5 +60,32 @@ Funkciók:
 
 Bekötés az alábbi ábra alapján:
 
-![mozgaserzekelo](/src/motion.jfif)
+![mozgaserzekelo](/img/motion.jfif)
 
+### Fényérzékelő / alkonyérzékelő
+
+A fényérzékelő szenzor alkalmas a fényerő mérésére. Az értékeket egy 0-1023 között terjedő skálán adja vissza, így meg tudjuk nézni, mi az a fényerő, ahol már kell az extra világítás, és mi az, ahol már nem.  Ebből kifolyólag ideálisnak találtam az okosotthon projekthez.
+
+Jellemzők:
+- Méret: 2.8cm x 1.5cm
+- Súly: 2g
+- Szükséges feszülség: 5V
+- Skála: erős fény - 0, teljes sötétség - 1023
+
+Kábelezés:
+
+![feny](/img/feny.PNG)
+
+### Esőszenzor
+
+Ez a szenzor nem a legjobb választás volt, lehetett volna a célnak megfelelőbbet találni, de már nem volt időm újat rendelni. Sajnos nem úgy érzékel, mint gondoltam, nem csupán a nedvességet, hanem a nedves felület méretét is nézi. Ha nagyon esik úgyis az egész vizes...
+
+Paraméterek:
+- Méret: 59 x 20 mm
+- Érzékelő mérete: 40 x 16 mm
+- Áramfelvétel: 20 mA
+- Feszültség: 5 V
+
+Csatlakoztatás az alábbi kötési rajz alapján:
+
+![eso](/img/Water-sensor.jpg)
