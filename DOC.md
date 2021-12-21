@@ -44,3 +44,21 @@ Funkciók:
 Bekötés az alábbi ábra alapján:
 
 ![ajtonyitas](/img/arduino-door-sensor-wiring-diagram.jpg)
+
+### Mozgásérzékelő
+
+Jó minőségű érzékelő modul, önálló érzékelőként, összhangban az Arduino™ platformmal vagy más rendszerekkel együtt is használható. Az általam választott célhoz pontosan megfelelőnek tűnt. A PIR mozgásérzékelő modulnak 3 darab pinje (GND, OUT, VCC) és két potmétere van, amelyből az egyik az távolság beállítására szolgál, a másik pedig a késleltetés beállítására.
+
+Funkciók:
+- Állítható távolság
+- Állítható késleltetés 0.3 - 300 mp
+- Blokkolási idő: 0.2 másodperc
+- Működési feszültség: DC 5V-20V
+- Statikus energiafogyasztás: 65 mA
+- Szintkimenet: Magas: 3.3 V, Alacsony: 0 V
+- Indukciós tartomány: 120°-nál kisebb, kevesebb mint 7 méter magasságú kúp
+
+Bekötés az alábbi ábra alapján:
+
+![mozgaserzekelo](/src/motion.jfif)
+
