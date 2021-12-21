@@ -89,3 +89,15 @@ Paraméterek:
 Csatlakoztatás az alábbi kötési rajz alapján:
 
 ![eso](/img/Water-sensor.jpg)
+
+## Kódok
+
+### Define és include
+A define-okat a program elején helyeztem el. Ide a programba belekerült, hogy melyik eszköz melyik pin-en keresztül kapcsolódik, így a program írása közben már nem kellett az arduinot néznem, mi hova lett bekötve, ezek segítségével meghívhattam a szükséges részeket.
+
+Az include-ok tartalmazzák azokat a programrészeket, melyeket kívülről importáltam. Tipikusan ilyen a szenzorokhoz, motorokhoz és adatbázishoz szükséges parancskészlet.
+
+### Setup és loop
+A kódokat 2 részre osztottam: egy setup és egy loop részre. A setup előkészíti a program futását, felkapcsolja az eszközöket, csatlakoztatja az adatbázist. A loop ismétlődik folyamatosan a program futása közben. A bonyolultabb programrészeket külön függvénybe gyűjtöttem. 
+
+A változóknak igyekeztem beszédes nevet adni, így mindenki számára világos, hogy 1-1 változót mire használtam.
