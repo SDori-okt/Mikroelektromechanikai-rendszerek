@@ -1,13 +1,20 @@
 #define ajto 2
-#define led 7
 #define w1 A1
 #define w2 A2
 #define sp 13
+#define oled0 0
+#define oled1 1
+#define oled2 2
+#define oled3 3
+#define hom 7
 
 #include <Ethernet.h>
 #include <MySQL_Connection.h>
 #include <Servo.h>
 #include <MySQL_Cursor.h>
+#include <DHT.h>
+
+DHT dht(hom, DHT22);
 
 Servo myservo;
 int eso1=0;
@@ -17,9 +24,9 @@ int eso2=0;
 
 byte mac_addr[] = { 0x08, 0x97, 0x98, 0xE5, 0x1F, 0x5A }; //08-97-98-E5-1F-5A
 
-IPAddress server_addr(127,0,0,1);  // IP of the MySQL *server* here
-char user[] = "root";              // MySQL user login username
-char password[] = "";        // MySQL user login password
+IPAddress server_addr(127,0,0,1);  // server ip
+char user[] = "root";              // MySQL felhasználónév
+char password[] = "";        // MySQL jelszó
 
 EthernetClient client;
 MySQL_Connection conn((Client *)&client);
@@ -30,42 +37,54 @@ MySQL_Connection conn((Client *)&client);
 void setup() {
     myservo.attach(sp);
     pinMode(ajto, INPUT_PULLUP);
-    pinMode(led, OUTPUT);
     Serial.begin(9600);
-    Serial.write("Hello");
+    while (!Serial);
     pinMode(w1, OUTPUT);
     pinMode(w2, OUTPUT);  
     digitalWrite(w1, HIGH); 
     digitalWrite(w2, HIGH); 
-    
-    //MySQL eleje
-    while (!Serial); // wait for serial port to connect
-    Ethernet.begin(mac_addr);
+
+    dht.begin();
+    /*
+    Ethernet.begin(mac, ip);
     Serial.println("Connecting...");
+    
+    Serial.print("- Arduino's IP address   : ");
+    Serial.println(Ethernet.localIP());
+
+    Serial.print("- Gateway's IP address   : ");
+    Serial.println(Ethernet.gatewayIP());
+
+    Serial.print("- Network's subnet mask  : ");
+    Serial.println(Ethernet.subnetMask());
+
+    Serial.print("- DNS server's IP address: ");
+    Serial.println(Ethernet.dnsServerIP());
+    
     if (conn.connect(server_addr, 3306, user, password)) {
-    delay(1000);
+      Serial.println("Csatlakoztatva.");
     } else {
-      Serial.println("Connection failed.");
+      Serial.println("Nem sikerült kapcsolódni.");
     }
     conn.close();
-      //MySQL vége
+    */
 }
 
 void loop() {
-  MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+  //MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
   int state=0;
   int pre = 0;
   pre=state;
   state = digitalRead(ajto);
   
   if (state == HIGH && pre == LOW){
-    cur_mem->execute("INSERT INTO idopontok(ido, nyit) VALUES (NOW(), 0)"); 
+    //cur_mem->execute("INSERT INTO idopontok(ido, nyit) VALUES (NOW(), 0)"); 
   }
   if(state == LOW && pre == HIGH){
-    cur_mem->execute("INSERT INTO idopontok(ido, nyit) VALUES (NOW(), 1)");
+    //cur_mem->execute("INSERT INTO idopontok(ido, nyit) VALUES (NOW(), 1)");
   }
-  delete cur_mem;
-  /*
+  //delete cur_mem;
+  
   int reading = analogRead(13);
   int currentangle = map(reading, 0, 1023, 0, 180); 
 
@@ -79,6 +98,9 @@ void loop() {
   if(eso1 > 170 and eso2 > 170 and currentangle<170){
     myservo.write(180);
   }
-  */
   
+  float t = dht.readTemperature();
+  Serial.println(t);
+
+  delay(1000);
 }
