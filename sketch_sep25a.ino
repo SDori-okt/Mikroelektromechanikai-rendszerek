@@ -15,6 +15,7 @@
 #include <DHT.h>
 
 DHT dht(hom, DHT22);
+U8GLIB_SH1106_128X64 u8g(2, 3, 10, 5, 4);
 
 Servo myservo;
 int eso1=0;
@@ -31,7 +32,18 @@ char password[] = "";        // MySQL jelszó
 EthernetClient client;
 MySQL_Connection conn((Client *)&client);
 
-
+void draw(void) 
+{
+   u8g.setFont(u8g_font_courR14);
+   u8g.drawStr(0, 20, "Hőm: ");
+   u8g.drawStr(0, 60, "Pára: ");
+   u8g.setPrintPos(60, 20);
+   u8g.print(dht.readTemperature(), 0);
+   u8g.println("°C");
+   u8g.setPrintPos(72, 60);
+   u8g.print(dht.readHumidity(), 0);
+   u8g.println("%");
+}
 
 
 void setup() {
@@ -98,9 +110,11 @@ void loop() {
   if(eso1 > 170 and eso2 > 170 and currentangle<170){
     myservo.write(180);
   }
-  
+  /*
   float t = dht.readTemperature();
-  Serial.println(t);
+  Serial.println(t);*/
+    
+  draw();
 
   delay(1000);
 }
